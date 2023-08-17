@@ -76,9 +76,38 @@ def get_data_type_mapping(entry: str, clean: bool = True) -> typing.Tuple[str, s
     return key, val
 
 
+def add_defaults_to_rules(rules: typing.Dict[str, str]) -> typing.Dict[str, str]:
+    defaults = {
+        "integer": "INTEGER",
+        "character": "TEXT",
+        "real": "REAL",
+        "boolean": "INTEGER",
+        "bigint": "INTEGER",
+        "smallint": "INTEGER"
+    }
+
+    return rules | defaults
+
+
 def apply_mappings(entry: str, rules: typing.Dict[str, str]) -> str:
 
-    for key, val in rules.items():
-        entry = re.sub(key, val, entry)
+    header, body = entry.split("(", 1)
+
+    body = body.split(",")
+    body = [line.strip().removesuffix("\n);").split(" ") for line in body]
+
+    for line in body:
+        try:
+            line[1] = rules[line[1]]
+        except KeyError:
+            line[1] = "BLOB"
+
+    body = [" ".join(line).rjust(4) for line in body]
+    body = ",\n".join(body)
+
+    entry = f"{header}(\n{body}\n);\n"
+
+    # for key, val in rules.items():
+    #     entry = re.sub(key, val, entry)
 
     return entry

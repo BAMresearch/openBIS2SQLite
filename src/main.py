@@ -1,11 +1,18 @@
-import pgdumplib
+import argparse
 import os
 import sys
 import typing
-import argparse
 from pathlib import Path
-from cleaning import clean_line, get_data_type_mapping, apply_mappings
 from pprint import pprint
+
+import pgdumplib
+
+from cleaning import (
+    add_defaults_to_rules,
+    apply_mappings,
+    clean_line,
+    get_data_type_mapping,
+)
 
 PATH_TO_DUMP = Path(Path().cwd().parent.parent, "backups", "dump_custom.sql")
 
@@ -38,14 +45,16 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
                 key, val = get_data_type_mapping(entry.defn)
                 type_mappings[key] = val
 
+        type_mappings = add_defaults_to_rules(type_mappings)
+
         print("Starting parsing table entries")
 
         for entry in dump.entries:
             if entry.desc == "TABLE":
                 line = clean_line(entry.defn)
-                line = apply_mappings(line, type_mappings)
                 table_name = line.split(" ")[2]
                 tables.add(table_name)
+                line = apply_mappings(line, type_mappings)
 
                 file.write(line)
 
