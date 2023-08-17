@@ -1,0 +1,4 @@
+Starting to parse the dump file
+Starting parsing domain entries
+Starting parsing table entries
+Starting parsing insert entries

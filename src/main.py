@@ -4,7 +4,8 @@ import sys
 import typing
 import argparse
 from pathlib import Path
-from cleaning import clean_line
+from cleaning import clean_line, get_data_type_mapping, apply_mappings
+from pprint import pprint
 
 PATH_TO_DUMP = Path(Path().cwd().parent.parent, "backups", "dump_custom.sql")
 
@@ -14,10 +15,13 @@ PATH_TO_TESTING = Path(Path().cwd(), "testing.sql")
 
 PATH_TO_TESTING_OUTPUT = sys.stdout
 
+DEBUG = 0
+
 
 def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing.NoReturn:
 
     tables = set()
+    type_mappings = {}
 
     print("Starting to parse the dump file")
 
@@ -27,9 +31,19 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
 
         file.write("BEGIN;\n")
 
+        print("Starting parsing domain entries")
+
+        for entry in dump.entries:
+            if entry.desc == "DOMAIN":
+                key, val = get_data_type_mapping(entry.defn)
+                type_mappings[key] = val
+
+        print("Starting parsing table entries")
+
         for entry in dump.entries:
             if entry.desc == "TABLE":
                 line = clean_line(entry.defn)
+                line = apply_mappings(line, type_mappings)
                 table_name = line.split(" ")[2]
                 tables.add(table_name)
 
@@ -37,9 +51,12 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
 
         tables.remove("external_data")  # Problems with parsing, useless anyways
 
+        print("Starting parsing insert entries")
+
         for table in tables:
             for line in dump.table_data("public", table):
-                file.write(clean_line(line[0]))
+                line = clean_line(line[0])
+                file.write(line)
                 file.write("\n")
 
             file.write("\n")
@@ -57,14 +74,31 @@ def test_cleaning(path_to_dump: os.PathLike) -> typing.NoReturn:
     print(clean_line(entry))
 
 
+def test_gen_entry_list(path_to_dump: os.PathLike) -> typing.NoReturn:
+
+    dump = pgdumplib.load(path_to_dump)
+
+    type_mappings = {}
+
+    for entry in dump.entries:
+        if entry.desc == "DOMAIN":
+            key, val = get_data_type_mapping(entry.defn)
+            type_mappings[key] = val
+
+    pprint(type_mappings)
+
+
 def main():
     parser = argparse.ArgumentParser(description="True and Test run split")
-    parser.add_argument("-t", "--test", action="store_true", help="Set if you want to test run")
+    parser.add_argument("-t", "--test", action="store_true", help="Cleaning test run")
+    parser.add_argument("-l", "--list", action="store_true", help="Generate entry list")
 
     args = parser.parse_args()
 
     if args.test:
         test_cleaning(PATH_TO_TESTING)
+    elif args.list:
+        test_gen_entry_list(PATH_TO_DUMP)
     else:
         parse_dump(PATH_TO_DUMP, PATH_TO_OUTPUT)
 
