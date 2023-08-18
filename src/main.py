@@ -83,7 +83,7 @@ def test_cleaning(path_to_dump: os.PathLike) -> typing.NoReturn:
     print(clean_line(entry))
 
 
-def test_gen_entry_list(path_to_dump: os.PathLike) -> typing.NoReturn:
+def test_gen_domain_list(path_to_dump: os.PathLike) -> typing.NoReturn:
 
     dump = pgdumplib.load(path_to_dump)
 
@@ -91,6 +91,7 @@ def test_gen_entry_list(path_to_dump: os.PathLike) -> typing.NoReturn:
 
     for entry in dump.entries:
         if entry.desc == "DOMAIN":
+            print(entry.defn)
             key, val = get_data_type_mapping(entry.defn)
             type_mappings[key] = val
 
@@ -100,14 +101,14 @@ def test_gen_entry_list(path_to_dump: os.PathLike) -> typing.NoReturn:
 def main():
     parser = argparse.ArgumentParser(description="True and Test run split")
     parser.add_argument("-t", "--test", action="store_true", help="Cleaning test run")
-    parser.add_argument("-l", "--list", action="store_true", help="Generate entry list")
+    parser.add_argument("-d", "--domain", action="store_true", help="Generate domain list")
 
     args = parser.parse_args()
 
     if args.test:
         test_cleaning(PATH_TO_TESTING)
-    elif args.list:
-        test_gen_entry_list(PATH_TO_DUMP)
+    elif args.domain:
+        test_gen_domain_list(PATH_TO_DUMP)
     else:
         parse_dump(PATH_TO_DUMP, PATH_TO_OUTPUT)
 

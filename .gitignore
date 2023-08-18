@@ -177,3 +177,5 @@ pyrightconfig.json
 
 *.sql
 *.db
+*.swp
+*.log

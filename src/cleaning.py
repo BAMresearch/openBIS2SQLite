@@ -15,8 +15,8 @@ def clean_line(entry: str) -> str:
     entry = re.sub("true", "\"t\"", entry)
     entry = re.sub("false", "\"f\"", entry)
     entry = clean_constraints(entry)
-    entry = clean_trim_after_pattern(entry, "with")
-    entry = clean_trim_after_pattern(entry, "DEFAULT")
+    entry = clean_trim_after_pattern(entry, "with", "DOMAIN")
+    entry = clean_trim_after_pattern(entry, "DEFAULT", r".*(DOMAIN|TABLE).*")
     return entry
 
 
@@ -47,10 +47,10 @@ def clean_constraints(entry: str) -> str:
     return entry
 
 
-def clean_trim_after_pattern(entry: str, pattern: str) -> str:
+def clean_trim_after_pattern(entry: str, pattern: str, check: str) -> str:
 
     search_pat = re.compile(pattern)
-    domain_pat = re.compile(r"DOMAIN")
+    domain_pat = re.compile(check)
 
     if not (search_pat.search(entry) and domain_pat.search(entry)):
         return entry
@@ -96,13 +96,18 @@ def apply_mappings(entry: str, rules: typing.Dict[str, str]) -> str:
     body = body.split(",")
     body = [line.strip().removesuffix("\n);").split(" ") for line in body]
 
+    pattern = re.compile(r".*varying\([0-9]+\)")
+
     for line in body:
+        if pattern.match(" ".join(line)):
+            line.pop(2)
         try:
             line[1] = rules[line[1]]
         except KeyError:
             line[1] = "BLOB"
 
-    body = [" ".join(line).rjust(4) for line in body]
+    body = [" ".join(line) for line in body]
+    body = [line.rjust(len(line) + 4) for line in body]
     body = ",\n".join(body)
 
     entry = f"{header}(\n{body}\n);\n"
