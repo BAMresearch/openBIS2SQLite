@@ -117,7 +117,9 @@ def apply_mappings(entry: str, rules: typing.Dict[str, str]) -> str:
 
 def split_hbt(entry: str) -> typing.Tuple[str, str, str]:
     header, body_trailer = entry.split("(", 1)
-    body = body_trailer.removesuffix(");\n")
+    header = header.strip()
+    print(body_trailer)
+    body = body_trailer.strip().removesuffix("\n);")
     trailer = ");\n"
 
     return header, body, trailer
@@ -125,6 +127,6 @@ def split_hbt(entry: str) -> typing.Tuple[str, str, str]:
 
 def split_body(body: str) -> typing.List[str]:
     body_split = body.split(",")
-    body_split = [line.strip() for line in body]
+    body_split = [line.strip() for line in body_split]
 
     return body_split

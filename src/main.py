@@ -14,6 +14,8 @@ from cleaning import (
     get_data_type_mapping,
 )
 
+from dump_object import DumpObject
+
 PATH_TO_DUMP = Path(Path().cwd().parent.parent, "backups", "dump_att_inserts.sql")
 
 PATH_TO_OUTPUT = Path(Path().cwd().parent, "sqlite_dump.sql")
@@ -102,13 +104,22 @@ def test_entry(path_to_dump: os.PathLike, entry_desc: str = "") -> typing.NoRetu
 
     dump = pgdumplib.load(path_to_dump)
 
-    for entry in dump.entries:
-        if not entry_desc:
+    if not entry_desc:
+        for idx, entry in enumerate(dump.entries):
             print(entry)
             print("\n\n")
-        elif entry.desc == entry_desc:
-            print(entry)
-            print("\n\n")
+            if idx >= 5:
+                break
+
+    else:
+        for entry in dump.entries:
+            if entry.desc == entry_desc:
+
+                do = DumpObject(entry)
+
+                print(do)
+                print(do.body)
+                print("\n\n")
 
 
 def main():
