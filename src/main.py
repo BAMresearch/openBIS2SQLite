@@ -14,7 +14,7 @@ from cleaning import (
     get_data_type_mapping,
 )
 
-PATH_TO_DUMP = Path(Path().cwd().parent.parent, "backups", "dump_custom.sql")
+PATH_TO_DUMP = Path(Path().cwd().parent.parent, "backups", "dump_att_inserts.sql")
 
 PATH_TO_OUTPUT = Path(Path().cwd().parent, "sqlite_dump.sql")
 
@@ -98,10 +98,24 @@ def test_gen_domain_list(path_to_dump: os.PathLike) -> typing.NoReturn:
     pprint(type_mappings)
 
 
+def test_entry(path_to_dump: os.PathLike, entry_desc: str = "") -> typing.NoReturn:
+
+    dump = pgdumplib.load(path_to_dump)
+
+    for entry in dump.entries:
+        if not entry_desc:
+            print(entry)
+            print("\n\n")
+        elif entry.desc == entry_desc:
+            print(entry)
+            print("\n\n")
+
+
 def main():
     parser = argparse.ArgumentParser(description="True and Test run split")
     parser.add_argument("-t", "--test", action="store_true", help="Cleaning test run")
-    parser.add_argument("-d", "--domain", action="store_true", help="Generate domain list")
+    parser.add_argument("-d", "--domain", action="store_true", help="Generate domain list")  # noqa: E501
+    parser.add_argument("-e", "--entry", help="Debug entry")  # noqa: E501
 
     args = parser.parse_args()
 
@@ -109,6 +123,8 @@ def main():
         test_cleaning(PATH_TO_TESTING)
     elif args.domain:
         test_gen_domain_list(PATH_TO_DUMP)
+    elif args.entry:
+        test_entry(PATH_TO_DUMP, args.entry)
     else:
         parse_dump(PATH_TO_DUMP, PATH_TO_OUTPUT)
 
