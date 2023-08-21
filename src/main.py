@@ -14,7 +14,7 @@ from cleaning import (
     get_data_type_mapping,
 )
 
-from dump_object import DumpObject
+from classes import DumpTable
 
 PATH_TO_DUMP = Path(Path().cwd().parent.parent, "backups", "dump_att_inserts.sql")
 
@@ -115,7 +115,7 @@ def test_entry(path_to_dump: os.PathLike, entry_desc: str = "") -> typing.NoRetu
         for entry in dump.entries:
             if entry.desc == entry_desc:
 
-                do = DumpObject(entry)
+                do = DumpTable(entry)
 
                 print(do)
                 print(do.body)
