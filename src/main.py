@@ -27,7 +27,7 @@ PATH_TO_TESTING_OUTPUT = sys.stdout
 DEBUG = 0
 
 
-def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing.NoReturn:
+def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing.NoReturn:  # noqa: E501
 
     tables = set()
     type_mappings = {}

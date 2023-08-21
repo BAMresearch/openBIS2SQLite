@@ -5,7 +5,7 @@ from dataclasses import dataclass
 import pgdumplib
 from pgdumplib.dump import Entry
 
-from cleaning import split_body, split_hbt
+from cleaning import split_body, split_hbt, clean_line
 from constants import EntryType
 
 
@@ -27,7 +27,9 @@ class DumpTable:
         constraint_pat = re.compile(r"CONSTRAINT")
         self.constraint_flag = constraint_pat.search(sql_entry)
 
-        self.header, temp_body, self.trailer = split_hbt(entry.defn)
+        sql_entry = clean_line(sql_entry)
+
+        self.header, temp_body, self.trailer = split_hbt(sql_entry)
         self.body = split_body(temp_body)
 
     @property
