@@ -1,13 +1,7 @@
 import re
 import typing
 
-CONVERTING_RULES = {
-    "text": "TEXT",
-    "real": "REAL",
-    "integer": "INTEGER",
-    "bigint": "INTEGER",
-    "boolean": "INTEGER",
-}
+from constants import CONVERTING_RULES
 
 
 def clean_line(entry: str) -> str:
@@ -115,17 +109,48 @@ def apply_mappings(entry: str, rules: typing.Dict[str, str]) -> str:
     return entry
 
 
-def split_hbt(entry: str) -> typing.Tuple[str, str, str]:
-    header, body_trailer = entry.split("(", 1)
+def split_hb_table(entry: str) -> typing.Tuple[str, str]:
+    header, body = entry.split("(", 1)
     header = header.strip()
-    body = body_trailer.strip().removesuffix("\n);")
-    trailer = ");\n"
+    body = body.strip().removesuffix("\n);")
 
-    return header, body, trailer
+    return header, body
 
 
-def split_body(body: str) -> typing.List[str]:
+def split_body_table(body: str) -> typing.List[str]:
     body_split = body.split(",")
     body_split = [line.strip() for line in body_split]
 
     return body_split
+
+
+def split_insert(entry: str) -> typing.Tuple[str, str, str]:
+    entry_split = entry.split(" ")
+
+    values_index = entry_split.index("VALUES")
+
+    # try:
+    #     values_index = entry_split.index("VALUES")
+    # except ValueError:
+    #     print("\n\n\n\n\n")
+    #     print(entry)
+    #     print("\n\n\n\n\n")
+    #     raise ValueError
+
+    header = " ".join(entry_split[0:3])
+    attributes = " ".join(entry_split[3:values_index])
+    values = " ".join(entry_split[values_index + 1:])
+
+    return header, attributes, values
+
+
+def parse_insert_attributes(attributes: str) -> typing.List[str]:
+    trimmed_attributes = attributes.lstrip("(").rstrip(")")
+    split_attributes = trimmed_attributes.split(",")
+    return split_attributes
+
+
+def parse_insert_values(values: str) -> typing.List[str]:
+    trimmed_values = values.lstrip("(").rstrip(");")
+    split_values = trimmed_values.split(",")
+    return split_values
