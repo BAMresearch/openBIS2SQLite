@@ -75,9 +75,9 @@ class DumpInsert():
     values: typing.List[str]
     table: str
 
-    def __init__(self, entry: Entry):
+    def __init__(self, entry: str):
 
-        sql_entry = clean_line(entry[0])
+        sql_entry = clean_line(entry)
 
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
