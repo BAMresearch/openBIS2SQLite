@@ -168,17 +168,10 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
         print("Starting parsing insert entries")
 
         for table in tables:
-            prev_entry = ""
             for entry in dump.table_data("public", table):
 
-                try:
-                    print(entry[0])
-                    insert = DumpInsert(entry[0])
-                    file.write(str(insert))
-                except ValueError:
-                    prev_entry += entry[0]
-                    print(prev_entry)
-                    raise ValueError("sum shit broke")
+                insert = DumpInsert(entry[0])
+                file.write(str(insert))
 
         file.write("END;\n")
 
