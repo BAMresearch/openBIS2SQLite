@@ -129,14 +129,6 @@ def split_insert(entry: str) -> typing.Tuple[str, str, str]:
 
     values_index = entry_split.index("VALUES")
 
-    # try:
-    #     values_index = entry_split.index("VALUES")
-    # except ValueError:
-    #     print("\n\n\n\n\n")
-    #     print(entry)
-    #     print("\n\n\n\n\n")
-    #     raise ValueError
-
     header = " ".join(entry_split[0:3])
     attributes = " ".join(entry_split[3:values_index])
     values = " ".join(entry_split[values_index + 1:])
@@ -147,10 +139,12 @@ def split_insert(entry: str) -> typing.Tuple[str, str, str]:
 def parse_insert_attributes(attributes: str) -> typing.List[str]:
     trimmed_attributes = attributes.lstrip("(").rstrip(")")
     split_attributes = trimmed_attributes.split(",")
+    split_attributes = [attribute.strip() for attribute in split_attributes]
     return split_attributes
 
 
 def parse_insert_values(values: str) -> typing.List[str]:
     trimmed_values = values.lstrip("(").rstrip(");")
     split_values = trimmed_values.split(",")
+    split_values = [value.strip() for value in split_values]
     return split_values

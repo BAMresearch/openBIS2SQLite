@@ -158,6 +158,7 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
         for entry in dump.entries:
             if entry.desc == "TABLE":
                 table = DumpTable(entry)
+                table.apply_mappings(type_mappings)
                 tables[table.tag] = table
 
                 file.write(str(table))
@@ -167,18 +168,30 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
 
         print("Starting parsing insert entries")
 
-        for table in tables:
+        cnt = 0
+        for table_tag, table in tables.items():
             prev_entry = ""
-            for entry in dump.table_data("public", table):
+            for entry in dump.table_data("public", table_tag):
 
-                true_entry = prev_entry + entry[0]
+                full_entry = prev_entry + entry[0]
 
                 try:
-                    insert = DumpInsert(true_entry)
+                    insert = DumpInsert(full_entry)
+                    cnt += 1
+                    print(f"created insert {cnt}")
                     file.write(str(insert))
                     prev_entry = ""
                 except ValueError:
-                    prev_entry = true_entry
+                    prev_entry = full_entry
+
+                # print("\n\n")
+                # for attribute in set(insert.attributes) ^ set(table.get_attributes()):
+                #    print(attribute)
+                #    print("\n")
+                #    print(insert.attributes)
+                #    print("\n")
+                #    print(insert.values)
+                #    insert.pop_attribute(attribute)
 
         file.write("END;\n")
 

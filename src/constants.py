@@ -15,6 +15,10 @@ class EntryType(Enum):
     OTHER = auto()
 
 
+class BruhMoment(Exception):
+    pass
+
+
 CONVERTING_RULES = {
     "text": "TEXT",
     "real": "REAL",

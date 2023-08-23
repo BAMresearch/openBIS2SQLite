@@ -12,7 +12,7 @@ from cleaning import (
     split_hb_table,
     split_insert,
 )
-from constants import EntryType
+from constants import EntryType, BruhMoment
 
 
 @dataclass
@@ -39,6 +39,7 @@ class DumpTable(DumpBase):
     header: str
     body: typing.List[str]
     constraint_flag: bool
+    attributes: typing.List[str]
 
     def __init__(self, entry: Entry):
 
@@ -63,8 +64,29 @@ class DumpTable(DumpBase):
 
         return f"{self.header} (\n{combined_body}\n);\n"
 
-    def _find_attributes(self) -> typing.NoReturn:
-        pass
+    def get_attributes(self) -> typing.List[str]:
+        attributes = []
+
+        for line in self.body:
+            attribute = line.split(" ")[0]
+            attributes.append(attribute)
+
+        return attributes
+
+    def apply_mappings(self, rules: typing.Dict[str, str]) -> typing.NoReturn:
+
+        pattern = re.compile(r".*varying\([0-9]+\)")
+        self.body = [line.split(" ") for line in self.body]
+
+        for line in self.body:
+            if pattern.match(" ".join(line)):
+                line.pop(2)
+            try:
+                line[1] = rules[line[1]]
+            except KeyError:
+                line[1] = "BLOB"
+
+        self.body = [" ".join(line) for line in self.body]
 
 
 @dataclass
@@ -82,8 +104,12 @@ class DumpInsert():
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
         self.values = parse_insert_values(temp_values)
-
         self.table = self.header.split(" ")[2]
+
+        if not len(self.attributes) == len(self.values):
+            # print(self.attributes, self.values)
+            raise BruhMoment
+            return
 
     def __str__(self) -> str:
 
@@ -91,3 +117,9 @@ class DumpInsert():
         combined_values = " ".join(self.values)
 
         return f"{self.header} ({combined_attributes}) VALUES ({combined_values});\n"
+
+    def pop_attribute(self, attribute_name: str) -> str:
+        attribute_index = self.attributes.index(attribute_name)
+
+        self.attributes.pop(attribute_index)
+        return self.values.pop(attribute_index)
