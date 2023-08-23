@@ -12,7 +12,13 @@ from cleaning import (
     clean_line,
     get_data_type_mapping,
 )
-from constants import IGNORED_TABLES, PATH_TO_DUMP, PATH_TO_OUTPUT, PATH_TO_TESTING
+from constants import (
+    IGNORED_TABLES,
+    PATH_TO_DUMP,
+    PATH_TO_OUTPUT,
+    PATH_TO_TESTING,
+    BruhMoment,
+)
 
 DEBUG = 0
 
@@ -168,6 +174,8 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
 
         print("Starting parsing insert entries")
 
+        problematic_inserts = []
+
         cnt = 0
         for table_tag, table in tables.items():
             prev_entry = ""
@@ -178,22 +186,32 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
                 try:
                     insert = DumpInsert(full_entry)
                     cnt += 1
-                    print(f"created insert {cnt}")
+                    if cnt % 500 == 0:
+                        print(f"created insert {cnt}")
                     file.write(str(insert))
                     prev_entry = ""
                 except ValueError:
                     prev_entry = full_entry
+                except BruhMoment:
+                    problematic_inserts.append(insert)
 
-                # print("\n\n")
-                # for attribute in set(insert.attributes) ^ set(table.get_attributes()):
-                #    print(attribute)
-                #    print("\n")
-                #    print(insert.attributes)
-                #    print("\n")
-                #    print(insert.values)
-                #    insert.pop_attribute(attribute)
+                    # print("\n\n")
+                    # for attribute in set(insert.attributes) ^ set(table.get_attributes()):
+                    #    print(attribute)
+                    #    print("\n")
+                    #    print(insert.attributes)
+                    #    print("\n")
+                    #    print(insert.values)
+                    #    insert.pop_attribute(attribute)
 
         file.write("END;\n")
+        for insert in problematic_inserts:
+            print(insert)
+            print("\n")
+            print(f"{insert.attributes}, len: {len(insert.attributes)}")
+            print("\n")
+            print(f"{insert.values}, len: {len(insert.values)}")
+            print("\n")
 
     print("Parsing finished")
 

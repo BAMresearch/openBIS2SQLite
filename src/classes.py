@@ -2,17 +2,19 @@ import re
 import typing
 from dataclasses import dataclass
 
+import sqlparse
 from pgdumplib.dump import Entry
 
 from cleaning import (
     clean_line,
     parse_insert_attributes,
     parse_insert_values,
+    parse_insert_values_sqlparse,
     split_body_table,
     split_hb_table,
     split_insert,
 )
-from constants import EntryType, BruhMoment
+from constants import BruhMoment, EntryType
 
 
 @dataclass
@@ -96,25 +98,28 @@ class DumpInsert():
     attributes: typing.List[str]
     values: typing.List[str]
     table: str
+    sqlparse_obj: sqlparse.sql.Statement
 
     def __init__(self, entry: str):
 
         sql_entry = clean_line(entry)
+        self.sqlparse_tokens = sqlparse.parse(sql_entry)[0]
 
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
-        self.values = parse_insert_values(temp_values)
+        self.values = parse_insert_values_sqlparse(self.sqlparse_tokens)
         self.table = self.header.split(" ")[2]
 
         if not len(self.attributes) == len(self.values):
-            # print(self.attributes, self.values)
+            # problem = commas in string values break parsing
+            print(f"{self.attributes}, lenght: {len(self.attributes)}")
+            print(f"{self.values}, lenght: {len(self.values)}")
             raise BruhMoment
-            return
 
     def __str__(self) -> str:
 
-        combined_attributes = " ".join(self.attributes)
-        combined_values = " ".join(self.values)
+        combined_attributes = ", ".join(self.attributes)
+        combined_values = ", ".join(self.values)
 
         return f"{self.header} ({combined_attributes}) VALUES ({combined_values});\n"
 
