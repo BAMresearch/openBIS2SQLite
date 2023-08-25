@@ -104,7 +104,7 @@ class DumpInsert():
     def __init__(self, entry: str):
 
         sql_entry = clean_line(entry)
-        self.sqlparse_tokens = sqlparse.parse(sql_entry)[0]
+        # self.sqlparse_tokens = sqlparse.parse(sql_entry)[0]
 
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
@@ -121,7 +121,9 @@ class DumpInsert():
     def __str__(self) -> str:
 
         combined_attributes = ", ".join(self.attributes)
-        combined_values = ", ".join(self.values)
+        combined_values = [str(element)for element in self.values]
+        combined_values = ", ".join(combined_values)
+        combined_values = re.sub("None", "NULL", combined_values)
 
         return f"{self.header} ({combined_attributes}) VALUES ({combined_values});\n"
 

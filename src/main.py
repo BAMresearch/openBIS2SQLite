@@ -190,9 +190,17 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
                         print(f"created insert {cnt}")
                     file.write(str(insert))
                     prev_entry = ""
-                except ValueError:
+                except ValueError as err:
+                    print("Entry not well defined, Value Error new main")
+                    print(err)
+                    print("entry: ")
+                    print(full_entry)
                     prev_entry = full_entry
-                except BruhMoment:
+                except BruhMoment as err:
+                    print("Parsing error, BruhMoment new main")
+                    print(err)
+                    print("entry: ")
+                    print(full_entry)
                     problematic_inserts.append(insert)
 
                     # print("\n\n")

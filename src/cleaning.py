@@ -9,8 +9,8 @@ from constants import CONVERTING_RULES, BruhMoment
 
 def clean_line(entry: str) -> str:
     entry = re.sub("public.", "", entry)
-    entry = re.sub("true", "\"t\"", entry)
-    entry = re.sub("false", "\"f\"", entry)
+    entry = re.sub("true", "'t'", entry)
+    entry = re.sub("false", "'f'", entry)
     entry = clean_constraints(entry)
     entry = clean_trim_after_pattern(entry, "with", "DOMAIN")
     entry = clean_trim_after_pattern(entry, "DEFAULT", r".*(DOMAIN|TABLE).*")
@@ -179,6 +179,7 @@ def parse_insert_values_sqlparse(statement: sqlparse.sql.Statement):
 
 def parse_insert_values_ast(values: str) -> typing.List[str]:
     trimmed_values = values.rstrip(";")
+    trimmed_values = re.sub("NULL", "None", trimmed_values)
     print(trimmed_values)
     res = literal_eval(trimmed_values)
     print(list(res))
