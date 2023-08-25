@@ -1,5 +1,6 @@
 import re
 import typing
+from ast import literal_eval
 
 import sqlparse
 
@@ -174,3 +175,12 @@ def parse_insert_values_sqlparse(statement: sqlparse.sql.Statement):
             break
 
     return [str(token) for token in values_generator]
+
+
+def parse_insert_values_ast(values: str) -> typing.List[str]:
+    trimmed_values = values.rstrip(";")
+    print(trimmed_values)
+    res = literal_eval(trimmed_values)
+    print(list(res))
+    print("\n\n")
+    return list(literal_eval(trimmed_values))

@@ -10,6 +10,7 @@ from cleaning import (
     parse_insert_attributes,
     parse_insert_values,
     parse_insert_values_sqlparse,
+    parse_insert_values_ast,
     split_body_table,
     split_hb_table,
     split_insert,
@@ -107,7 +108,8 @@ class DumpInsert():
 
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
-        self.values = parse_insert_values_sqlparse(self.sqlparse_tokens)
+        # self.values = parse_insert_values_sqlparse(self.sqlparse_tokens)
+        self.values = parse_insert_values_ast(temp_values)
         self.table = self.header.split(" ")[2]
 
         if not len(self.attributes) == len(self.values):
