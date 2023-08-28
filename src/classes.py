@@ -6,11 +6,12 @@ import sqlparse
 from pgdumplib.dump import Entry
 
 from cleaning import (
+    clean_change_parenthesis,
     clean_line,
     parse_insert_attributes,
     parse_insert_values,
-    parse_insert_values_sqlparse,
     parse_insert_values_ast,
+    parse_insert_values_sqlparse,
     split_body_table,
     split_hb_table,
     split_insert,
@@ -109,6 +110,11 @@ class DumpInsert():
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
         # self.values = parse_insert_values_sqlparse(self.sqlparse_tokens)
+        print("temp values before")
+        print(temp_values)
+        temp_values = clean_change_parenthesis(temp_values)
+        print("temp values after")
+        print(temp_values)
         self.values = parse_insert_values_ast(temp_values)
         self.table = self.header.split(" ")[2]
 

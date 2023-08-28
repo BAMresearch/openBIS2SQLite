@@ -185,3 +185,33 @@ def parse_insert_values_ast(values: str) -> typing.List[str]:
     print(list(res))
     print("\n\n")
     return list(literal_eval(trimmed_values))
+
+
+def manual_tuple_parse(tuple_string: str) -> typing.Tuple[str]:
+    stripped_tuple = tuple_string.lstrip("(").rstrip(")")
+
+    inside_string_single = False  # inside 'string'
+    inside_string_double = False  # inside "string"
+
+    curr, rest = stripped_tuple.split(",", 1)
+
+    while True:
+        for letter in curr:
+            if letter == "'":
+                inside_string_single = not inside_string_single
+            elif letter == '"':
+                inside_string_double = not inside_string_double
+
+        if inside_string_single or inside_string_double:
+            pass
+
+
+def clean_change_parenthesis(entry: str) -> str:
+    pat = re.compile(r"'(\"(.+)\"(.*)\s?)*''((\d|/|-)+)''(:\w{2})\s?(.*)'")
+
+    # TODO: Here the result contains a space at the end of the string
+    while pat.search(entry):
+        print("searching")
+        entry = pat.sub("'\\1\"\\4\"\\6 \\7'", entry)
+
+    return entry
