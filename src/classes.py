@@ -12,6 +12,7 @@ from cleaning import (
     parse_insert_values,
     parse_insert_values_ast,
     parse_insert_values_sqlparse,
+    remove_apostrophes_phone_number,
     split_body_table,
     split_hb_table,
     split_insert,
@@ -112,6 +113,7 @@ class DumpInsert():
         # self.values = parse_insert_values_sqlparse(self.sqlparse_tokens)
         print("temp values before")
         print(temp_values)
+        temp_values = remove_apostrophes_phone_number(temp_values)
         temp_values = clean_change_parenthesis(temp_values)
         print("temp values after")
         print(temp_values)

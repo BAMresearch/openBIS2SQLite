@@ -9,8 +9,8 @@ from constants import CONVERTING_RULES, BruhMoment
 
 def clean_line(entry: str) -> str:
     entry = re.sub("public.", "", entry)
-    entry = re.sub("true", "'t'", entry)
-    entry = re.sub("false", "'f'", entry)
+    entry = re.sub("true", "True", entry)
+    entry = re.sub("false", "False", entry)
     entry = clean_constraints(entry)
     entry = clean_trim_after_pattern(entry, "with", "DOMAIN")
     entry = clean_trim_after_pattern(entry, "DEFAULT", r".*(DOMAIN|TABLE).*")
@@ -207,11 +207,19 @@ def manual_tuple_parse(tuple_string: str) -> typing.Tuple[str]:
 
 
 def clean_change_parenthesis(entry: str) -> str:
-    pat = re.compile(r"'(\"(.+)\"(.*)\s?)*''((\d|/|-)+)''(:\w{2})\s?(.*)'")
+    pat = re.compile(r"'(\"(.+)\":(\w|,)+\s?)*((''([\w/\-\.\+@]+)'')|('''))(:(\w|,)+)\s?('(.*)':\w+\s?)*'")
 
     # TODO: Here the result contains a space at the end of the string
     while pat.search(entry):
-        print("searching")
-        entry = pat.sub("'\\1\"\\4\"\\6 \\7'", entry)
+        entry = pat.sub("'\\1\"\\6\"\\8 \\10'", entry)
+
+    return entry
+
+
+def remove_apostrophes_phone_number(entry: str) -> str:
+    pat = re.compile(r"'([\+]?[(]?[0-9]{3}[)]?[-\s\.]?[0-9]{3}[-\s\.]?[0-9]{4,6})'''")
+
+    while pat.search(entry):
+        entry = pat.sub("'\\1\"'", entry)
 
     return entry
