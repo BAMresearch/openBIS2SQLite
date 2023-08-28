@@ -117,7 +117,11 @@ class DumpInsert():
         temp_values = clean_change_parenthesis(temp_values)
         print("temp values after")
         print(temp_values)
-        self.values = parse_insert_values_ast(temp_values)
+        try:
+            self.values = parse_insert_values_ast(temp_values)
+        except SyntaxError as err:
+            print(sql_entry)
+            raise SyntaxError(err)
         self.table = self.header.split(" ")[2]
 
         if not len(self.attributes) == len(self.values):
