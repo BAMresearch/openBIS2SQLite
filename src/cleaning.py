@@ -68,7 +68,7 @@ def get_data_type_mapping(entry: str, clean: bool = True) -> typing.Tuple[str, s
     try:
         val = CONVERTING_RULES[val_unconverted]
     except KeyError:
-        val = "BLOB"
+        val = "TEXT"  # changed from blob
 
     return key, val
 
@@ -101,7 +101,7 @@ def apply_mappings(entry: str, rules: typing.Dict[str, str]) -> str:
         try:
             line[1] = rules[line[1]]
         except KeyError:
-            line[1] = "BLOB"
+            line[1] = "TEXT"
 
     body = [" ".join(line) for line in body]
     body = [line.rjust(len(line) + 4) for line in body]
@@ -180,10 +180,10 @@ def parse_insert_values_sqlparse(statement: sqlparse.sql.Statement):
 def parse_insert_values_ast(values: str) -> typing.List[str]:
     trimmed_values = values.rstrip(";")
     trimmed_values = re.sub("NULL", "None", trimmed_values)
-    print(trimmed_values)
+    # print(trimmed_values)
     res = literal_eval(trimmed_values)
-    print(list(res))
-    print("\n\n")
+    # print(list(res))
+    # print("\n\n")
     return list(literal_eval(trimmed_values))
 
 
@@ -212,8 +212,8 @@ def clean_change_parenthesis(entry: str) -> str:
 
     # TODO: Here the result contains a space at the end of the string
     while pat.search(entry) and guard < 50:
-        print("searching")
-        print(entry)
+        # print("searching")
+        # print(entry)
         entry = pat.sub("'\\1\"\\6\"\\8 \\10'", entry)
         guard += 1
 

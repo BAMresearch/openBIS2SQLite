@@ -89,7 +89,7 @@ class DumpTable(DumpBase):
             try:
                 line[1] = rules[line[1]]
             except KeyError:
-                line[1] = "BLOB"
+                line[1] = "TEXT"
 
         self.body = [" ".join(line) for line in self.body]
 
@@ -103,7 +103,7 @@ class DumpInsert():
     table: str
     sqlparse_obj: sqlparse.sql.Statement
 
-    def __init__(self, entry: str):
+    def __init__(self, entry: str, table_attrs: typing.List[str]):
 
         sql_entry = clean_line(entry)
         # self.sqlparse_tokens = sqlparse.parse(sql_entry)[0]
@@ -115,12 +115,12 @@ class DumpInsert():
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
         # self.values = parse_insert_values_sqlparse(self.sqlparse_tokens)
-        print("temp values before")
-        print(temp_values)
+        # print("temp values before")
+        # print(temp_values)
         temp_values = remove_apostrophes_phone_number(temp_values)
         temp_values = clean_change_parenthesis(temp_values)
-        print("temp values after")
-        print(temp_values)
+        # print("temp values after")
+        # print(temp_values)
         try:
             self.values = parse_insert_values_ast(temp_values)
         except SyntaxError as err:
@@ -129,16 +129,42 @@ class DumpInsert():
             raise SyntaxError(err)
         self.table = self.header.split(" ")[2]
 
+        assert isinstance(self.attributes, list)
+        assert isinstance(self.values, list)
+
+        if not len(self.attributes) == len(self.values):
+            if len(self.attributes) > len(self.values):
+                self.attributes = self.attributes[:len(self.values)]
+            else:
+                self.values = self.values[:len(self.attributes)]
+
+        to_remove = set(self.attributes) ^ set(table_attrs)
+
+        assert to_remove < set(self.attributes)
+
+        for to_remove_attr in list(to_remove):
+            self.pop_attribute(to_remove_attr)
+
         if not len(self.attributes) == len(self.values):
             # problem = commas in string values break parsing
-            print(f"{self.attributes}, lenght: {len(self.attributes)}")
-            print(f"{self.values}, lenght: {len(self.values)}")
+            print(f"attributes lenght: {len(self.attributes)}")
+            print(f"values lenght: {len(self.values)}")
+            for idx in range(min(len(self.attributes), len(self.values))):
+                print(f"{self.attributes[idx]}: {self.values[idx]}")
+            if len(self.attributes) < len(self.values):
+                print(self.values[-1])
+            else:
+                print(self.attributes[-1])
             raise BruhMoment
 
     def __str__(self) -> str:
 
         combined_attributes = ", ".join(self.attributes)
-        combined_values = [str(element)for element in self.values]
+        for val in self.values:
+            print(f"{val}, type: {type(val)}")
+        # print(self.values)
+        combined_values = [f"\'{element}\'" if isinstance(element, str) else str(element) for element in self.values]
+        # print(combined_values)
         combined_values = ", ".join(combined_values)
         combined_values = re.sub("None", "NULL", combined_values)
 

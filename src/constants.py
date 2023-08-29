@@ -39,23 +39,9 @@ IGNORED_TABLES = [
     "data_stores",
     "events_search",
     "scripts",
-
-    "attachment_contents",
-    "attachments",
-    "authorization_group_persons",
-    "authorization_groups",
-    "content_copies",
-    "controlled_vocabularies",
-    "controlled_vocabulary_terms",
-    "core_plugins",
-    "data_all",
-    "data_set_copies_history",
-    "data_set_properties_history",
-    "data_set_relationships_history",
 ]
 
 WHITELISTED_TABLES = [
-    "data_set_relationships_history",
     "data_set_properties",
     "data_set_relationships_all",
     "data_set_type_property_types",

@@ -181,12 +181,13 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
                 continue
             prev_entry = ""
             infloop_guard = False
+            table_attrs = tables[table_tag].get_attributes()
             for entry in dump.table_data("public", table_tag):
 
                 full_entry = prev_entry + entry[0]
 
                 try:
-                    insert = DumpInsert(full_entry)
+                    insert = DumpInsert(full_entry, table_attrs)
                     cnt += 1
                     if cnt % 500 == 0:
                         print(f"created insert {cnt}")
@@ -215,15 +216,6 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
 
                     if infloop_guard:
                         raise NewlineInEntryError
-
-                    # print("\n\n")
-                    # for attribute in set(insert.attributes) ^ set(table.get_attributes()):
-                    #    print(attribute)
-                    #    print("\n")
-                    #    print(insert.attributes)
-                    #    print("\n")
-                    #    print(insert.values)
-                    #    insert.pop_attribute(attribute)
 
         file.write("END;\n")
         print("STARTING TO WRITE OUT PROBLEMATIC_INSERTS")
