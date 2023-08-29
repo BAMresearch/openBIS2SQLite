@@ -207,11 +207,15 @@ def manual_tuple_parse(tuple_string: str) -> typing.Tuple[str]:
 
 
 def clean_change_parenthesis(entry: str) -> str:
-    pat = re.compile(r"'(\"(.+)\":(\w|,)+\s?)*((''([\w/\-\.\+@]+)'')|('''))(:(\w|,)+)\s?('(.*)':\w+\s?)*'")
+    pat = re.compile(r"'(\"(.+)\":(\w|,)+\s?)*((''([\w/\-\.\+@]+)'')|('''))(:(\w|,)+)\s?('(.*)':[\w,]+\s?)*'")  # noqa: E501
+    guard = 0
 
     # TODO: Here the result contains a space at the end of the string
-    while pat.search(entry):
+    while pat.search(entry) and guard < 50:
+        print("searching")
+        print(entry)
         entry = pat.sub("'\\1\"\\6\"\\8 \\10'", entry)
+        guard += 1
 
     return entry
 

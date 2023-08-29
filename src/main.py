@@ -17,7 +17,9 @@ from constants import (
     PATH_TO_DUMP,
     PATH_TO_OUTPUT,
     PATH_TO_TESTING,
+    WHITELISTED_TABLES,
     BruhMoment,
+    NewlineInEntryError,
 )
 
 DEBUG = 0
@@ -169,16 +171,16 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
 
                 file.write(str(table))
 
-        for ignored_table in IGNORED_TABLES:
-            tables.pop(ignored_table)
-
         print("Starting parsing insert entries")
 
         problematic_inserts = []
 
         cnt = 0
         for table_tag, table in tables.items():
+            if table_tag not in WHITELISTED_TABLES:
+                continue
             prev_entry = ""
+            infloop_guard = False
             for entry in dump.table_data("public", table_tag):
 
                 full_entry = prev_entry + entry[0]
@@ -190,6 +192,7 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
                         print(f"created insert {cnt}")
                     file.write(str(insert))
                     prev_entry = ""
+                    infloop_guard = False
                 except ValueError as err:
                     print("Entry not well defined, Value Error new main")
                     print(err)
@@ -202,6 +205,16 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
                     print("entry: ")
                     print(full_entry)
                     problematic_inserts.append(insert)
+                except NewlineInEntryError as err:
+                    print("NewlineInEntryError new main")
+                    print(err)
+                    print("entry: ")
+                    print(full_entry)
+                    print(f"ENTRY OBJ LENGTH: {len(entry)}")
+                    prev_entry = full_entry
+
+                    if infloop_guard:
+                        raise NewlineInEntryError
 
                     # print("\n\n")
                     # for attribute in set(insert.attributes) ^ set(table.get_attributes()):
@@ -213,11 +226,10 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
                     #    insert.pop_attribute(attribute)
 
         file.write("END;\n")
+        print("STARTING TO WRITE OUT PROBLEMATIC_INSERTS")
         for insert in problematic_inserts:
             print(insert)
-            print("\n")
             print(f"{insert.attributes}, len: {len(insert.attributes)}")
-            print("\n")
             print(f"{insert.values}, len: {len(insert.values)}")
             print("\n")
 

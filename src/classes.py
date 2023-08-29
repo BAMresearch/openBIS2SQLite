@@ -17,7 +17,7 @@ from cleaning import (
     split_hb_table,
     split_insert,
 )
-from constants import BruhMoment, EntryType
+from constants import BruhMoment, EntryType, NewlineInEntryError
 
 
 @dataclass
@@ -108,6 +108,10 @@ class DumpInsert():
         sql_entry = clean_line(entry)
         # self.sqlparse_tokens = sqlparse.parse(sql_entry)[0]
 
+        if not sql_entry.endswith(");"):
+            print(sql_entry)
+            raise NewlineInEntryError
+
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
         # self.values = parse_insert_values_sqlparse(self.sqlparse_tokens)
@@ -120,6 +124,7 @@ class DumpInsert():
         try:
             self.values = parse_insert_values_ast(temp_values)
         except SyntaxError as err:
+            print("\n" * 5)
             print(sql_entry)
             raise SyntaxError(err)
         self.table = self.header.split(" ")[2]
