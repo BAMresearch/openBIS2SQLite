@@ -9,9 +9,7 @@ from cleaning import (
     clean_change_parenthesis,
     clean_line,
     parse_insert_attributes,
-    parse_insert_values,
     parse_insert_values_ast,
-    parse_insert_values_sqlparse,
     remove_apostrophes_phone_number,
     split_body_table,
     split_hb_table,
@@ -106,7 +104,6 @@ class DumpInsert():
     def __init__(self, entry: str, table_attrs: typing.List[str]):
 
         sql_entry = clean_line(entry)
-        # self.sqlparse_tokens = sqlparse.parse(sql_entry)[0]
 
         if not sql_entry.endswith(");"):
             print(sql_entry)
@@ -114,13 +111,8 @@ class DumpInsert():
 
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
         self.attributes = parse_insert_attributes(temp_attributes)
-        # self.values = parse_insert_values_sqlparse(self.sqlparse_tokens)
-        # print("temp values before")
-        # print(temp_values)
         temp_values = remove_apostrophes_phone_number(temp_values)
         temp_values = clean_change_parenthesis(temp_values)
-        # print("temp values after")
-        # print(temp_values)
         try:
             self.values = parse_insert_values_ast(temp_values)
         except SyntaxError as err:
@@ -128,9 +120,6 @@ class DumpInsert():
             print(sql_entry)
             raise SyntaxError(err)
         self.table = self.header.split(" ")[2]
-
-        assert isinstance(self.attributes, list)
-        assert isinstance(self.values, list)
 
         if not len(self.attributes) == len(self.values):
             if len(self.attributes) > len(self.values):
@@ -160,11 +149,7 @@ class DumpInsert():
     def __str__(self) -> str:
 
         combined_attributes = ", ".join(self.attributes)
-        for val in self.values:
-            print(f"{val}, type: {type(val)}")
-        # print(self.values)
         combined_values = [f"\'{element}\'" if isinstance(element, str) else str(element) for element in self.values]
-        # print(combined_values)
         combined_values = ", ".join(combined_values)
         combined_values = re.sub("None", "NULL", combined_values)
 
