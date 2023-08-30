@@ -43,9 +43,9 @@ IGNORED_TABLES = [
 
 WHITELISTED_TABLES = [
     "data_set_properties",
-    "data_set_relationships_all",
     "data_set_type_property_types",
     "data_set_types",
+    "data_types",
     "experiment_properties",
     "experiment_type_property_types",
     "experiment_types",

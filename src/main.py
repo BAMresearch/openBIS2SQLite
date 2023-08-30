@@ -165,6 +165,8 @@ def new_parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> ty
 
         for entry in dump.entries:
             if entry.desc == "TABLE":
+                if entry.tag not in WHITELISTED_TABLES:
+                    continue
                 table = DumpTable(entry)
                 table.apply_mappings(type_mappings)
                 tables[table.tag] = table
