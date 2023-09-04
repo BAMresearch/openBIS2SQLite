@@ -8,6 +8,7 @@ from pgdumplib.dump import Entry
 from cleaning import (
     clean_change_parenthesis,
     clean_line,
+    clean_defaults_body,
     parse_insert_attributes,
     parse_insert_values_ast,
     remove_apostrophes_phone_number,
@@ -51,10 +52,23 @@ class DumpTable(DumpBase):
         constraint_pat = re.compile(r"CONSTRAINT")
         self.constraint_flag = constraint_pat.search(sql_entry)
 
+        print("sql entry before cleaning")
+        print(sql_entry)
+        print("\n\n\n")
         sql_entry = clean_line(sql_entry)
+        print("sql entry after cleaning")
+        print(sql_entry)
+        print("\n\n\n")
 
         self.header, temp_body = split_hb_table(sql_entry)
         self.body = split_body_table(temp_body)
+        print("Body before clean")
+        print(self.body)
+        print("\n\n\n")
+        self.body = clean_defaults_body(self.body)
+        print("Body after clean")
+        print(self.body)
+        print("\n\n\n")
 
         super(DumpTable, self).__init__(entry=entry)
 
@@ -82,6 +96,7 @@ class DumpTable(DumpBase):
         self.body = [line.split(" ") for line in self.body]
 
         for line in self.body:
+            print(line)
             if pattern.match(" ".join(line)):
                 line.pop(2)
             try:
@@ -106,7 +121,7 @@ class DumpInsert():
         sql_entry = clean_line(entry)
 
         if not sql_entry.endswith(");"):
-            print(sql_entry)
+            # print(sql_entry)
             raise NewlineInEntryError
 
         self.header, temp_attributes, temp_values = split_insert(sql_entry)
@@ -129,6 +144,11 @@ class DumpInsert():
 
         to_remove = set(self.attributes) ^ set(table_attrs)
 
+        print("toremove, attributes")
+        print(self.table)
+        print(to_remove)
+        print(self.attributes)
+        print("\n\n")
         assert to_remove < set(self.attributes)
 
         for to_remove_attr in list(to_remove):

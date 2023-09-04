@@ -45,6 +45,7 @@ WHITELISTED_TABLES = [
     "data_set_properties",
     "data_set_type_property_types",
     "data_set_types",
+    "data_all",
     "data_types",
     "experiment_properties",
     "experiment_type_property_types",

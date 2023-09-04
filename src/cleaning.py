@@ -8,12 +8,12 @@ from constants import CONVERTING_RULES, BruhMoment
 
 
 def clean_line(entry: str) -> str:
-    entry = re.sub("public.", "", entry)
+    entry = re.sub(r"public\.", "", entry)
     entry = re.sub("true", "True", entry)
     entry = re.sub("false", "False", entry)
     entry = clean_constraints(entry)
     entry = clean_trim_after_pattern(entry, "with", "DOMAIN")
-    entry = clean_trim_after_pattern(entry, "DEFAULT", r".*(DOMAIN|TABLE).*")
+    entry = clean_trim_after_pattern(entry, "DEFAULT", r".*(DOMAIN).*")
     return entry
 
 
@@ -54,6 +54,10 @@ def clean_trim_after_pattern(entry: str, pattern: str, check: str) -> str:
 
     entry_split = entry.split(pattern, 1)[0].rstrip()
     return f"{entry_split};\n"
+
+
+def clean_defaults_body(body: typing.List[str]) -> typing.List[str]:
+    return [line.split(" DEFAULT", 1)[0] for line in body]
 
 
 def get_data_type_mapping(entry: str, clean: bool = True) -> typing.Tuple[str, str]:
@@ -187,6 +191,7 @@ def clean_change_parenthesis(entry: str) -> str:
     pat = re.compile(r"'(\"(.+)\":(\w|,)+\s?)*((''([\w/\-\.\+@]+)'')|('''))(:(\w|,)+)\s?('(.*)':[\w,]+\s?)*'")  # noqa: E501
     guard = 0
 
+    # TODO: Here the result contains a space at the end of the string
     while pat.search(entry) and guard < 50:
         entry = pat.sub("'\\1\"\\6\"\\8 \\10'", entry)
         guard += 1

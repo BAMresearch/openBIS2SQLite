@@ -16,6 +16,8 @@ from constants import (
     NewlineInEntryError,
 )
 
+import re
+
 DEBUG = 0
 
 
@@ -47,7 +49,11 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
             if entry.desc == "TABLE":
                 if entry.tag not in WHITELISTED_TABLES:
                     continue
+                if re.search(r"data_all", entry.defn):
+                    print(entry.defn)
                 table = DumpTable(entry)
+                if re.search(r"data_all", entry.defn):
+                    print(str(table))
                 table.apply_mappings(type_mappings)
                 tables[table.tag] = table
 
@@ -85,11 +91,12 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
                     print(full_entry)
                     problematic_inserts.append(insert)
                 except NewlineInEntryError as err:
-                    print("NewlineInEntryError new main")
-                    print(err)
-                    print("entry: ")
-                    print(full_entry)
-                    print(f"ENTRY OBJ LENGTH: {len(entry)}")
+                    # TODO: write a real debugger
+                    # print("NewlineInEntryError new main")
+                    # print(err)
+                    # print("entry: ")
+                    # print(full_entry)
+                    # print(f"ENTRY OBJ LENGTH: {len(entry)}")
                     prev_entry = full_entry
 
                     if infloop_guard:
@@ -97,6 +104,7 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
 
         file.write("END;\n")
     if len(problematic_inserts) == 0:
+        print("No bad inserts found")
         print("Parsing finished")
         return
 
@@ -112,10 +120,25 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
     print("Parsing finished")
 
 
+def debug_data_all(path_to_dump):
+
+    dump = pgdumplib.load(path_to_dump)
+
+    for table in dump.entries:
+        if not table.desc == "TABLE":
+            continue
+        if not re.search(r"data_all", table.defn):
+            continue
+        print(table)
+        print("\n\n")
+        print(table.defn)
+
+
 def main():
     parser = argparse.ArgumentParser(description="True and Test run split")
     parser.add_argument("-i", "--input", help="Input (dump) file path")
     parser.add_argument("-o", "--output", help="Output file")
+    parser.add_argument("-d", "--debug", action="store_true", help="Debug")
 
     args = parser.parse_args()
 
@@ -127,7 +150,10 @@ def main():
 
     output_path.touch()
 
-    parse_dump(input_path, output_path)
+    if args.debug:
+        debug_data_all(input_path)
+    else:
+        parse_dump(input_path, output_path)
 
 
 if __name__ == "__main__":
