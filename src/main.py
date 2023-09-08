@@ -16,8 +16,6 @@ from constants import (
     NewlineInEntryError,
 )
 
-import re
-
 DEBUG = 0
 
 
@@ -49,11 +47,7 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
             if entry.desc == "TABLE":
                 if entry.tag not in WHITELISTED_TABLES:
                     continue
-                if re.search(r"data_all", entry.defn):
-                    print(entry.defn)
                 table = DumpTable(entry)
-                if re.search(r"data_all", entry.defn):
-                    print(str(table))
                 table.apply_mappings(type_mappings)
                 tables[table.tag] = table
 
@@ -126,8 +120,6 @@ def debug_data_all(path_to_dump):
 
     for table in dump.entries:
         if not table.desc == "TABLE":
-            continue
-        if not re.search(r"data_all", table.defn):
             continue
         print(table)
         print("\n\n")

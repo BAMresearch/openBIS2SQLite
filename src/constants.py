@@ -42,6 +42,8 @@ IGNORED_TABLES = [
 ]
 
 WHITELISTED_TABLES = [
+    "controlled_vocabularies",
+    "controlled_vocabulary_terms",
     "data_set_properties",
     "data_set_type_property_types",
     "data_set_types",

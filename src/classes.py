@@ -52,23 +52,11 @@ class DumpTable(DumpBase):
         constraint_pat = re.compile(r"CONSTRAINT")
         self.constraint_flag = constraint_pat.search(sql_entry)
 
-        print("sql entry before cleaning")
-        print(sql_entry)
-        print("\n\n\n")
         sql_entry = clean_line(sql_entry)
-        print("sql entry after cleaning")
-        print(sql_entry)
-        print("\n\n\n")
 
         self.header, temp_body = split_hb_table(sql_entry)
-        self.body = split_body_table(temp_body)
-        print("Body before clean")
-        print(self.body)
-        print("\n\n\n")
-        self.body = clean_defaults_body(self.body)
-        print("Body after clean")
-        print(self.body)
-        print("\n\n\n")
+        temp_body = split_body_table(temp_body)
+        self.body = clean_defaults_body(temp_body)
 
         super(DumpTable, self).__init__(entry=entry)
 
@@ -96,7 +84,6 @@ class DumpTable(DumpBase):
         self.body = [line.split(" ") for line in self.body]
 
         for line in self.body:
-            print(line)
             if pattern.match(" ".join(line)):
                 line.pop(2)
             try:
@@ -144,11 +131,6 @@ class DumpInsert():
 
         to_remove = set(self.attributes) ^ set(table_attrs)
 
-        print("toremove, attributes")
-        print(self.table)
-        print(to_remove)
-        print(self.attributes)
-        print("\n\n")
         assert to_remove < set(self.attributes)
 
         for to_remove_attr in list(to_remove):
