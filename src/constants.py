@@ -24,16 +24,6 @@ CONVERTING_RULES = {
     "boolean": "INTEGER",
 }
 
-IGNORED_TABLES = [
-    "core_plugins",
-    "events",
-    "external_data",
-    "data_store_services",
-    "data_stores",
-    "events_search",
-    "scripts",
-]
-
 WHITELISTED_TABLES = [
     "controlled_vocabularies",
     "controlled_vocabulary_terms",
