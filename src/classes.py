@@ -150,7 +150,7 @@ class DumpInsert():
     def __str__(self) -> str:
 
         combined_attributes = ", ".join(self.attributes)
-        combined_values = [f"\'{element}\'" if isinstance(element, str) else str(element) for element in self.values]
+        combined_values = [f"\'{element}\'" if isinstance(element, str) else str(element) for element in self.values]  # noqa: E501
         combined_values = ", ".join(combined_values)
         combined_values = re.sub("None", "NULL", combined_values)
 
