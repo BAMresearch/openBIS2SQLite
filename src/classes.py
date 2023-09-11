@@ -42,15 +42,11 @@ class DumpTable(DumpBase):
     pgdumplib_entry: Entry
     header: str
     body: typing.List[str]
-    constraint_flag: bool
     attributes: typing.List[str]
 
     def __init__(self, entry: Entry):
 
         sql_entry = entry.defn
-
-        constraint_pat = re.compile(r"CONSTRAINT")
-        self.constraint_flag = constraint_pat.search(sql_entry)
 
         sql_entry = clean_line(sql_entry)
 
@@ -96,14 +92,12 @@ class DumpTable(DumpBase):
 
 @dataclass
 class DumpInsert():
-    pgdumplib_entry: Entry
     header: str
     attributes: typing.List[str]
     values: typing.List[str]
     table: str
-    sqlparse_obj: sqlparse.sql.Statement
 
-    def __init__(self, entry: str, table_attrs: typing.List[str]):
+    def __init__(self, entry: str, table_attrs: typing.Optional[typing.List[str]] = None):  # noqa: E501
 
         sql_entry = clean_line(entry)
 
@@ -128,6 +122,9 @@ class DumpInsert():
                 self.attributes = self.attributes[:len(self.values)]
             else:
                 self.values = self.values[:len(self.attributes)]
+
+        if not table_attrs:
+            return
 
         to_remove = set(self.attributes) ^ set(table_attrs)
 
