@@ -13,6 +13,7 @@ class Filepaths(Enum):
     TABLE_TSVEC = (Path(TABLE_PATH, "table_tsvec.sql"), Path(TABLE_PATH, "table_tsvec_out.sql"))
     INSERT = (Path(INSERT_PATH, "insert.sql"), Path(INSERT_PATH, "insert_out.sql"))
     INSERT_TSVEC = (Path(INSERT_PATH, "insert_tsvec.sql"), Path(INSERT_PATH, "insert_tsvec_out.sql"))
+    INSERT_PHONE = (Path(INSERT_PATH, "insert_phone.sql"), Path(INSERT_PATH, "insert_phone_out.sql"))
 
 
 class DumpIDs(Enum):
@@ -129,8 +130,6 @@ def test_reading_table(pgdumplib_table_entry, curr_param, pgdumplib_domain_mappi
     with open(Filepaths[curr_param].value[1], "r") as outfile:
         output_sql = str(outfile.read())
 
-    print()
-
     table = DumpTable(pgdumplib_table_entry)
     table.apply_mappings(pgdumplib_domain_mappings)
 
@@ -138,7 +137,7 @@ def test_reading_table(pgdumplib_table_entry, curr_param, pgdumplib_domain_mappi
 
 
 @pytest.mark.parametrize(
-    "insert", ["INSERT", "INSERT_TSVEC"]
+    "insert", ["INSERT", "INSERT_TSVEC", "INSERT_PHONE"]
 )
 def test_reading_insert(insert):
 
