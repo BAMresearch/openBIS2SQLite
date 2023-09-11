@@ -16,7 +16,7 @@ from cleaning import (
     split_hb_table,
     split_insert,
 )
-from constants import BruhMoment, EntryType, NewlineInEntryError
+from constants import ParsingError, EntryType, NewlineInEntryError
 
 
 @dataclass
@@ -118,7 +118,7 @@ class DumpInsert():
         try:
             self.values = parse_insert_values_ast(temp_values)
         except SyntaxError as err:
-            print("\n" * 5)
+            print("\n")
             print(sql_entry)
             raise SyntaxError(err)
         self.table = self.header.split(" ")[2]
@@ -137,7 +137,6 @@ class DumpInsert():
             self.pop_attribute(to_remove_attr)
 
         if not len(self.attributes) == len(self.values):
-            # problem = commas in string values break parsing
             print(f"attributes lenght: {len(self.attributes)}")
             print(f"values lenght: {len(self.values)}")
             for idx in range(min(len(self.attributes), len(self.values))):
@@ -146,7 +145,7 @@ class DumpInsert():
                 print(self.values[-1])
             else:
                 print(self.attributes[-1])
-            raise BruhMoment
+            raise ParsingError
 
     def __str__(self) -> str:
 

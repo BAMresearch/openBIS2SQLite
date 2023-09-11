@@ -12,7 +12,7 @@ from cleaning import (
 )
 from constants import (
     WHITELISTED_TABLES,
-    BruhMoment,
+    ParsingError,
     NewlineInEntryError,
 )
 
@@ -78,7 +78,7 @@ def parse_dump(path_to_dump: os.PathLike, path_to_output: os.PathLike) -> typing
                     print("entry: ")
                     print(full_entry)
                     prev_entry = full_entry
-                except BruhMoment as err:
+                except ParsingError as err:
                     print("Parsing error, BruhMoment new main")
                     print(err)
                     print("entry: ")

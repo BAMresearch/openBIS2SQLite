@@ -4,7 +4,7 @@ from ast import literal_eval
 
 import sqlparse
 
-from constants import CONVERTING_RULES, BruhMoment
+from constants import CONVERTING_RULES, ParsingError
 
 
 def clean_line(entry: str) -> str:
@@ -171,7 +171,7 @@ def parse_insert_values_sqlparse(statement: sqlparse.sql.Statement):
         for field in statement.tokens:
             print(field)
             print("\n")
-        raise BruhMoment
+        raise ParsingError
 
     for values_token in values_field:
         if isinstance(values_token, sqlparse.sql.Parenthesis):
@@ -191,7 +191,7 @@ def clean_change_parenthesis(entry: str) -> str:
     pat = re.compile(r"'(\"(.+)\":(\w|,)+\s?)*((''([\w/\-\.\+@]+)'')|('''))(:(\w|,)+)\s?('(.*)':[\w,]+\s?)*'")  # noqa: E501
     guard = 0
 
-    # TODO: Here the result contains a space at the end of the string
+    # guard is a check for infinite loops which maybe can occur
     while pat.search(entry) and guard < 50:
         entry = pat.sub("'\\1\"\\6\"\\8 \\10'", entry)
         guard += 1
