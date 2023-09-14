@@ -4,8 +4,8 @@ from enum import Enum
 from pathlib import Path
 from pgdumplib.dump import Entry
 
-TABLE_PATH = Path(Path.cwd(), "test_data", "tables")
-INSERT_PATH = Path(Path.cwd(), "test_data", "inserts")
+TABLE_PATH = Path(Path(__file__).parent.absolute(), "test_data", "tables")
+INSERT_PATH = Path(Path(__file__).parent.absolute(), "test_data", "inserts")
 
 
 class Filepaths(Enum):
