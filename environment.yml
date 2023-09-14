@@ -7,5 +7,6 @@ dependencies:
   - ca-certificates
   - openssl
   - pytest
-  - pgdumplib
+  - pip:
+    - pgdumplib
 prefix: /home/ckujath/miniconda3/envs/openbis2sqlite
