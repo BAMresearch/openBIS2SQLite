@@ -1,0 +1,1 @@
+INSERT INTO public.sample_type_property_types (id, saty_id, prty_id, is_mandatory, is_managed_internally, pers_id_registerer, registration_timestamp, is_displayed, ordinal, section, script_id, is_shown_edit, show_raw_value, is_unique) VALUES (1, 2, 2, false, false, 1, '2023-03-29 10:08:09.061+00', true, 1, 'Fake Data', NULL, false, false, false);
