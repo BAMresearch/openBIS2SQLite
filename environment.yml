@@ -9,4 +9,5 @@ dependencies:
   - pytest
   - pip:
     - pgdumplib
+    - ruff
 prefix: /home/ckujath/miniconda3/envs/openbis2sqlite
