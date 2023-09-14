@@ -2,9 +2,7 @@ import re
 import typing
 from ast import literal_eval
 
-import sqlparse
-
-from constants import CONVERTING_RULES, BruhMoment
+from constants import CONVERTING_RULES
 
 
 def clean_line(entry: str) -> str:
@@ -150,37 +148,6 @@ def parse_insert_attributes(attributes: str) -> typing.List[str]:
     return split_attributes
 
 
-def parse_insert_values(values: str) -> typing.List[str]:
-    trimmed_values = values.lstrip("(").rstrip(");")
-    split_values = trimmed_values.split(",")
-    split_values = [value.strip() for value in split_values]
-    return split_values
-
-
-def parse_insert_values_sqlparse(statement: sqlparse.sql.Statement):
-
-    for field in statement.tokens:
-        if isinstance(field, sqlparse.sql.Values):
-            values_field = field
-            break
-    else:
-        print("ERROR LOG : PARSE INSERT VALUES")
-        print("\n")
-        print(statement.tokens)
-        print("\n")
-        for field in statement.tokens:
-            print(field)
-            print("\n")
-        raise BruhMoment
-
-    for values_token in values_field:
-        if isinstance(values_token, sqlparse.sql.Parenthesis):
-            values_generator = values_token._groupable_tokens[0].get_identifiers()
-            break
-
-    return [str(token) for token in values_generator]
-
-
 def parse_insert_values_ast(values: str) -> typing.List[str]:
     trimmed_values = values.rstrip(";")
     trimmed_values = re.sub("NULL", "None", trimmed_values)
@@ -191,7 +158,7 @@ def clean_change_parenthesis(entry: str) -> str:
     pat = re.compile(r"'(\"(.+)\":(\w|,)+\s?)*((''([\w/\-\.\+@]+)'')|('''))(:(\w|,)+)\s?('(.*)':[\w,]+\s?)*'")  # noqa: E501
     guard = 0
 
-    # TODO: Here the result contains a space at the end of the string
+    # guard is a check for infinite loops which maybe can occur
     while pat.search(entry) and guard < 50:
         entry = pat.sub("'\\1\"\\6\"\\8 \\10'", entry)
         guard += 1

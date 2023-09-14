@@ -1,0 +1,30 @@
+[project]
+authors = [
+  { name="Cezary Kujath", email="cezary.kujath@bam.de" },
+]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "Topic :: Scientific/Engineering",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: MIT License",
+]
+dependencies = [
+  "pgdumplib"
+]
+description = "One of the packages of all time"
+license = {file = "LICENSE"}
+name = "openbis2sqlite"
+readme = "REAMDE.md"
+requires-python = ">=3.9"
+version = "0.0.1"
+
+[project.urls]
+repository = "https://github.com/BAMresearch/openBIS2SQLite.git"
+
+[tool.pytest.ini_options]
+pythonpath = [
+  "src"
+]
+
+[tool.ruff]
+line-length = 119

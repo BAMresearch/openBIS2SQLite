@@ -2,7 +2,6 @@ import re
 import typing
 from dataclasses import dataclass
 
-import sqlparse
 from pgdumplib.dump import Entry
 
 from cleaning import (
@@ -16,7 +15,7 @@ from cleaning import (
     split_hb_table,
     split_insert,
 )
-from constants import BruhMoment, EntryType, NewlineInEntryError
+from constants import ParsingError, EntryType, NewlineInEntryError
 
 
 @dataclass
@@ -42,15 +41,11 @@ class DumpTable(DumpBase):
     pgdumplib_entry: Entry
     header: str
     body: typing.List[str]
-    constraint_flag: bool
     attributes: typing.List[str]
 
     def __init__(self, entry: Entry):
 
         sql_entry = entry.defn
-
-        constraint_pat = re.compile(r"CONSTRAINT")
-        self.constraint_flag = constraint_pat.search(sql_entry)
 
         sql_entry = clean_line(sql_entry)
 
@@ -96,14 +91,12 @@ class DumpTable(DumpBase):
 
 @dataclass
 class DumpInsert():
-    pgdumplib_entry: Entry
     header: str
     attributes: typing.List[str]
     values: typing.List[str]
     table: str
-    sqlparse_obj: sqlparse.sql.Statement
 
-    def __init__(self, entry: str, table_attrs: typing.List[str]):
+    def __init__(self, entry: str, table_attrs: typing.Optional[typing.List[str]] = None):  # noqa: E501
 
         sql_entry = clean_line(entry)
 
@@ -118,7 +111,7 @@ class DumpInsert():
         try:
             self.values = parse_insert_values_ast(temp_values)
         except SyntaxError as err:
-            print("\n" * 5)
+            print("\n")
             print(sql_entry)
             raise SyntaxError(err)
         self.table = self.header.split(" ")[2]
@@ -129,6 +122,9 @@ class DumpInsert():
             else:
                 self.values = self.values[:len(self.attributes)]
 
+        if not table_attrs:
+            return
+
         to_remove = set(self.attributes) ^ set(table_attrs)
 
         assert to_remove < set(self.attributes)
@@ -137,7 +133,6 @@ class DumpInsert():
             self.pop_attribute(to_remove_attr)
 
         if not len(self.attributes) == len(self.values):
-            # problem = commas in string values break parsing
             print(f"attributes lenght: {len(self.attributes)}")
             print(f"values lenght: {len(self.values)}")
             for idx in range(min(len(self.attributes), len(self.values))):
@@ -146,12 +141,12 @@ class DumpInsert():
                 print(self.values[-1])
             else:
                 print(self.attributes[-1])
-            raise BruhMoment
+            raise ParsingError
 
     def __str__(self) -> str:
 
         combined_attributes = ", ".join(self.attributes)
-        combined_values = [f"\'{element}\'" if isinstance(element, str) else str(element) for element in self.values]
+        combined_values = [f"\'{element}\'" if isinstance(element, str) else str(element) for element in self.values]  # noqa: E501
         combined_values = ", ".join(combined_values)
         combined_values = re.sub("None", "NULL", combined_values)
 

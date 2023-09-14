@@ -1,0 +1,13 @@
+name: openbis2sqlite
+channels:
+  - conda-forge
+  - defaults
+dependencies:
+  - python=3.9
+  - ca-certificates
+  - openssl
+  - pytest
+  - pip:
+    - pgdumplib
+    - ruff
+prefix: /home/ckujath/miniconda3/envs/openbis2sqlite

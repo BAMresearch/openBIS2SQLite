@@ -1,0 +1,27 @@
+name: Tests
+on: [push]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: checkout repo content
+        uses: actions/checkout@v2    
+
+      - name: Setup Mambaforge
+        uses: conda-incubator/setup-miniconda@v2
+        with:
+            miniforge-variant: Mambaforge
+            miniforge-version: latest
+            activate-environment: openbis2sqlite 
+            use-mamba: true
+    
+      - name: Update environment
+        shell: bash -l {0}
+        run: mamba env update -n openbis2sqlite -f environment.yml
+
+      - name: Test with pytest
+        shell: bash -l {0}
+        run: |
+          pytest
