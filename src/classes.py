@@ -2,7 +2,6 @@ import re
 import typing
 from dataclasses import dataclass
 
-import sqlparse
 from pgdumplib.dump import Entry
 
 from cleaning import (

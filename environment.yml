@@ -1,37 +1,11 @@
 name: openbis2sqlite
 channels:
-  - anaconda
   - conda-forge
   - defaults
 dependencies:
-  - _libgcc_mutex=0.1=conda_forge
-  - _openmp_mutex=4.5=2_gnu
-  - bzip2=1.0.8=h7f98852_4
-  - ca-certificates=2023.01.10=h06a4308_0
-  - lazygit=0.40.2=h4c39bc6_0
-  - ld_impl_linux-64=2.40=h41732ed_0
-  - libffi=3.4.2=h7f98852_5
-  - libgcc-ng=13.1.0=he5830b7_0
-  - libgomp=13.1.0=he5830b7_0
-  - libnsl=2.0.0=h7f98852_0
-  - libsqlite=3.42.0=h2797004_0
-  - libuuid=2.38.1=h0b41bf4_0
-  - libzlib=1.2.13=hd590300_5
-  - ncurses=6.4=hcb278e6_0
-  - openssl=3.1.2=hd590300_0
-  - pip=23.2.1=pyhd8ed1ab_0
-  - python=3.9.16=h2782a2a_0_cpython
-  - readline=8.2=h8228510_1
-  - setuptools=68.0.0=pyhd8ed1ab_0
-  - sqlparse=0.4.3=py39h06a4308_0
-  - tk=8.6.12=h27826a3_0
-  - tzdata=2023c=h71feb2d_0
-  - wheel=0.41.1=pyhd8ed1ab_0
-  - xz=5.2.6=h166bdaf_0
-  - pip:
-      - pendulum==2.1.2
-      - pgdumplib==3.1.0
-      - python-dateutil==2.8.2
-      - pytzdata==2020.1
-      - six==1.16.0
-      - toposort==1.10
+  - python=3.9
+  - ca-certificates
+  - openssl
+  - pytest
+  - pgdumplib
+prefix: /home/ckujath/miniconda3/envs/openbis2sqlite
