@@ -22,7 +22,7 @@ requirements:
 
   run:
     - python
-    - pgdumplib>=3.1,<4
+    - pgdumplib
 
 about:
   home: https://github.com/BAMresearch/openBIS2SQLite
