@@ -8,7 +8,7 @@ import pgdumplib
 from classes import DumpInsert, DumpTable
 from cleaning import (
     add_defaults_to_rules,
-    get_data_type_mapping,
+    get_data_type_mapping
 )
 from constants import (
     WHITELISTED_TABLES,
