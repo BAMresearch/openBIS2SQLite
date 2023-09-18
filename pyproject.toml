@@ -19,7 +19,7 @@ description = "One of the packages of all time"
 license = {file = "LICENSE"}
 name = "openbis2sqlite"
 readme = "REAMDE.md"
-requires-python = ">=3.9"
+requires-python = ">=3.10"
 version = "0.0.1"
 
 [project.urls]
