@@ -11,7 +11,7 @@ source:
 
 build:
   skip: True  # [win or osx]
-  script: {{ PYTHON}} -m pip install . -vv
+  script: {{ PYTHON }} -m pip install . -vv
   number: 0
 
 requirements:
@@ -28,4 +28,4 @@ about:
   home: https://github.com/BAMresearch/openBIS2SQLite
   license: MIT
   license_family: MIT
-  summary: One of the packages of all time
+  summary: Package for exporting openBIS postgres dumps into sqlite
