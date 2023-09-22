@@ -27,7 +27,7 @@ repository = "https://github.com/BAMresearch/openBIS2SQLite.git"
 
 [tool.pytest.ini_options]
 pythonpath = [
-  "src"
+  "src/openbis2sqlite"
 ]
 
 [tool.ruff]
