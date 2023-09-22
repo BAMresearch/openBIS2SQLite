@@ -2,11 +2,12 @@ name: openbis2sqlite
 channels:
   - conda-forge
   - defaults
+  - bam77
 dependencies:
-  - python=3.9
+  - python=3.10
   - ca-certificates
   - openssl
   - pytest
+  - pgdumplib
   - pip:
-    - pgdumplib
     - ruff

@@ -1,5 +1,5 @@
 import pytest
-from openbis2sqlite.classes import DumpTable, DumpInsert
+from classes import DumpTable, DumpInsert
 from enum import Enum
 from pathlib import Path
 from pgdumplib.dump import Entry
