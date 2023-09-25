@@ -4,7 +4,7 @@ from dataclasses import dataclass
 
 from pgdumplib.dump import Entry
 
-from cleaning import (
+from openbis2sqlite.cleaning import (
     clean_change_parenthesis,
     clean_line,
     clean_defaults_body,
@@ -15,7 +15,7 @@ from cleaning import (
     split_hb_table,
     split_insert,
 )
-from constants import ParsingError, EntryType, NewlineInEntryError
+from openbis2sqlite.constants import ParsingError, EntryType, NewlineInEntryError
 
 
 @dataclass
