@@ -160,7 +160,10 @@ def clean_change_parenthesis(entry: str) -> str:
 
     # guard is a check for infinite loops which maybe can occur
     while pat.search(entry) and guard < 50:
-        entry = pat.sub("'\\1\"\\6\"\\8 \\10'", entry)
+        # entry = pat.sub("'\\1\"\\6\"\\8 \\10'", entry)
+        # TODO: CURRENTLY NOT SUPPORTED AS TAKES AGES WITH LONG TSVECTOR ENTRIES
+        # NEED TO REWRITE
+        entry = pat.sub("''", entry)
         guard += 1
 
     return entry
