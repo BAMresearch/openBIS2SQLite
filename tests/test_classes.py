@@ -1,7 +1,8 @@
-import pytest
-from classes import DumpTable, DumpInsert
 from enum import Enum
 from pathlib import Path
+
+import pytest
+from openbis2sqlite.classes import DumpInsert, DumpTable
 from pgdumplib.dump import Entry
 
 TABLE_PATH = Path(Path(__file__).parent.absolute(), "test_data", "tables")

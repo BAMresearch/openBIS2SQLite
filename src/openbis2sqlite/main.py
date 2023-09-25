@@ -5,15 +5,12 @@ from pathlib import Path
 
 import pgdumplib
 
-from classes import DumpInsert, DumpTable
-from cleaning import (
-    add_defaults_to_rules,
-    get_data_type_mapping
-)
-from constants import (
+from openbis2sqlite.classes import DumpInsert, DumpTable
+from openbis2sqlite.cleaning import add_defaults_to_rules, get_data_type_mapping
+from openbis2sqlite.constants import (
     WHITELISTED_TABLES,
-    ParsingError,
     NewlineInEntryError,
+    ParsingError,
 )
 
 DEBUG = 0
