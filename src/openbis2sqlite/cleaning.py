@@ -2,7 +2,7 @@ import re
 import typing
 from ast import literal_eval
 
-from constants import CONVERTING_RULES
+from openbis2sqlite.constants import CONVERTING_RULES
 
 
 def clean_line(entry: str) -> str:
