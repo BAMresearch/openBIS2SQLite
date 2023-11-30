@@ -1,0 +1,23 @@
+cff-version: 0.0.4
+title: openBIS2SQLite
+message: >-
+  If you use this software, please cite it using the
+  metadata from this file.
+type: software
+authors:
+ - given-names: Cezary
+    family-names: Kujath
+    email: cezary.kujath@bam.de
+    affiliation: Bundesanstalt für Materialforschung und -prüfung (BAM)
+  - given-names: Annika
+    family-names: Robens-Radermacher
+    email: annika.robens-radermacher@bam.de
+    affiliation: Bundesanstalt für Materialforschung und -prüfung (BAM)
+    orcid: 'https://orcid.org/0000-0001-9653-6085'
+repository-code: 'https://github.com/BAMresearch/PGDrome'
+abstract: >-
+  Scripts to convert openbis postgres dumps to a sqlite readable transaction
+keywords:
+  - openBIS
+  - sqlite
+license: MIT
